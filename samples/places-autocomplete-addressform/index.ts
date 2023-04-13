@@ -28,7 +28,7 @@ function initAutocomplete() {
   // addresses in the US and Canada.
   autocomplete = new google.maps.places.Autocomplete(address1Field, {
     componentRestrictions: { country: ["us", "ca"] },
-    fields: ["address_components", "geometry"],
+    fields: ["address_components"],
     types: ["address"],
   });
   address1Field.focus();
@@ -74,11 +74,20 @@ function fillInAddress() {
         break;
       }
 
-      case "locality":
+      // The sample code selects the locality component, which often represents the city part of the address.
+      case "locality": {
         (document.querySelector("#locality") as HTMLInputElement).value =
           component.long_name;
         break;
-
+      }
+ 
+      // Brooklyn and other parts of New York City do not include the city as part of the address using locality. Instead, they use sublocality_level_1.
+      case "sublocality_level_1": {
+        (document.querySelector("#locality") as HTMLInputElement).value =
+          component.long_name;
+        break;
+      }
+   
       case "administrative_area_level_1": {
         (document.querySelector("#state") as HTMLInputElement).value =
           component.short_name;
